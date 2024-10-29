@@ -85,7 +85,7 @@ make
 
 # 运行时耗
 
-本示例使用的是 rtdetrv2_r18vd_120e_coco.yml 模型，模型输入分别率640x640，显卡rtx4090，cuda12.5
+本示例使用的是 rtdetrv2_r18vd_120e_coco.yml 模型，模型输入分别率640x640，显卡rtx4090，cuda12.5，图像预处理用cuda加速
 
 ![image](https://github.com/user-attachments/assets/f29015f0-7b3f-496c-beaf-963783e5f6d9)
 

@@ -5,9 +5,9 @@
 
 int main()
 {
-    std::string OnnxFile = "/home/zq/Detect/rt_detr_v2/models/rtdetrv2_r18vd.onnx";
-    std::string SaveTrtFilePath = "/home/zq/Detect/rt_detr_v2/models/rtdetrv2_r18vd.trt";
-    cv::Mat SrcImage = cv::imread("/home/zq/Detect/rt_detr_v2/images/test.jpg");
+    std::string OnnxFile = "/root/autodl-tmp/RT-DETRv2_TensorRT_Cplusplus/models/rtdetrv2_r18vd.onnx";
+    std::string SaveTrtFilePath = "/root/autodl-tmp/RT-DETRv2_TensorRT_Cplusplus/models/rtdetrv2_r18vd.trt";
+    cv::Mat SrcImage = cv::imread("/root/autodl-tmp/RT-DETRv2_TensorRT_Cplusplus/images/test.jpg");
 
     int img_width = SrcImage.cols;
     int img_height = SrcImage.rows;
@@ -41,7 +41,7 @@ int main()
         putText(SrcImage, text1, cv::Point(xmin, ymin + 15), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 0, 255), 2);
     }
 
-    imwrite("/home/zq/Detect/rt_detr_v2/images/result.jpg", SrcImage);
+    imwrite("/root/autodl-tmp/RT-DETRv2_TensorRT_Cplusplus/images/result.jpg", SrcImage);
 
     printf("== obj: %d \n", int(float(CnnModel.DetectiontRects_.size()) / 6.0));
 

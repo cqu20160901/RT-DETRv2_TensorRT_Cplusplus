@@ -27,7 +27,7 @@ CNN::~CNN()
         cudaFree(Buffers_[i]);
         if (i >= 1)
         {
-            delete OutputData_[i - 1];
+            delete OutputData_[i-1];
         }
     }
 
@@ -71,7 +71,6 @@ void CNN::ModelInit()
     if (existEngine)
     {
         ReadTrtFile(SaveTrtFilePath_, PtrEngine_);
-        std::cout << "SaveTrtFilePath_:" << SaveTrtFilePath_ << std::endl;
         assert(PtrEngine_ != nullptr);
     }
     else
@@ -83,7 +82,6 @@ void CNN::ModelInit()
     assert(PtrEngine_ != nullptr);
     PtrContext_ = PtrEngine_->createExecutionContext();
     PtrContext_->setOptimizationProfile(0);
-    
     auto InputDims = nvinfer1::Dims4 {BatchSize_, InputChannel_, InputImageHeight_, InputImageWidth_};
     PtrContext_->setBindingDimensions(0, InputDims);
 
@@ -93,27 +91,26 @@ void CNN::ModelInit()
     int nbBindings = PtrEngine_->getNbBindings();
     BuffersDataSize_.resize(nbBindings);
     OutputData_.resize(nbBindings - 1);
-    
-    int OutputCount = 0;
     for (int i = 0; i < nbBindings; ++ i)
     {
         nvinfer1::Dims dims = PtrEngine_->getBindingDimensions(i);
         nvinfer1::DataType dtype = PtrEngine_->getBindingDataType(i);
         TotalSize = Volume(dims) * 1 * GetElementSize(dtype);
-        
 
         BuffersDataSize_[i] = TotalSize;
         cudaMalloc(&Buffers_[i], TotalSize);
-        
-        if (PtrEngine_->bindingIsInput(i))
+        if (i >= 1)
         {
-            std::cout << "input node name: "<< PtrEngine_->getBindingName(i) << ", dims: " << dims.nbDims << std::endl;  
+            OutputData_[i - 1] = new float[int(TotalSize / sizeof(float))];
+        }
+
+        if (0 == i)
+        {
+            std::cout << "input node name: "<< PtrEngine_->getBindingName(i) << ", dims: " << dims.nbDims << std::endl;
         }
         else
         {
             std::cout << "output node" << i - 1 << " name: "<< PtrEngine_->getBindingName(i) << ", dims: " << dims.nbDims << std::endl;
-            OutputData_[OutputCount] = new float[int(TotalSize / sizeof(float))];
-            OutputCount += 1;
         }
 
         for (int j = 0; j < dims.nbDims; j++) 
@@ -146,7 +143,7 @@ void CNN::Inference(cv::Mat &SrcImage)
     }
 
     cudaStreamSynchronize(Stream_);
-
+    
     // Postprocess
     static RtDetrV2 Postprocess;
     int ret = Postprocess.GetConvDetectionResult(OutputData_, DetectiontRects_);
